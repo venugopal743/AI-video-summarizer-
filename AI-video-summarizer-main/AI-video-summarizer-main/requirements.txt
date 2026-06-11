@@ -1,6 +1,0 @@
-flask
-transformers
-torch
-whisper
-yt-dlp
-pandas
