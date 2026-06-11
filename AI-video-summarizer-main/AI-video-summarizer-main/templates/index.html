@@ -1,0 +1,223 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AI Video Summarizer</title>
+  <style>
+    /* General Styles */
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      overflow-x: hidden;
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    .about-section {
+      padding: 50px;
+      background-color: #f9f9f9;
+      text-align: center;
+      transition: opacity 0.5s ease-in-out;
+    }
+
+    .about-section h2 {
+      font-size: 32px;
+      margin-bottom: 20px;
+      color: #333;
+    }
+
+    .about-section p {
+      font-size: 18px;
+      color: #555;
+    }
+
+    .about-section ul {
+      list-style-type: none;
+      padding: 0;
+    }
+
+    .about-section li {
+      margin: 10px 0;
+      font-weight: 500;
+    }
+
+    /* Navbar Styles */
+    .navbar {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 15px 30px;
+      background-color: #333;
+      color: white;
+    }
+
+    .logo {
+      font-size: 24px;
+      font-weight: 700;
+    }
+/* Ensure that links are not hidden */
+.nav-links {
+  display: flex; /* Ensures the links are displayed in a row */
+  list-style: none;
+  gap: 20px;
+  font-size: small;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: white;
+  font-weight: 500;
+  font-size: 18px;
+}
+
+.nav-links a:hover {
+  text-decoration: underline;
+}
+
+    /* Hero Section Styles */
+    .hero {
+      position: relative;
+      width: 100%;
+      height: 100vh;
+      overflow: hidden;
+    }
+
+    .background-video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: -1;
+    }
+
+    .overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .content {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      text-align: center;
+      color: white;
+    }
+
+    .video-btn {
+      margin-top: 15px;
+      padding: 10px 20px;
+      background-color: #007bff;
+      color: white;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      font-size: 16px;
+    }
+
+    .video-btn:hover {
+      background-color: #0056b3;
+    }
+
+    /* Video Modal Styles */
+    .video-modal {
+      display: none;
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background-color: rgba(0, 0, 0, 0.8);
+      justify-content: center;
+      align-items: center;
+      z-index: 1000;
+    }
+
+    .video-container {
+      position: relative;
+      width: 80%;
+      max-width: 800px;
+    }
+
+    .close-btn {
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      font-size: 24px;
+      color: white;
+      cursor: pointer;
+    }
+  </style>
+</head>
+<body>
+        <!-- Navigation Bar -->
+<header class="navbar">
+  <div class="logo">Video Summarizer</div>
+  <nav>
+    <ul class="nav-links">
+      <li><a href="#">Home</a></li>
+      <li><a href="/static/static.html">Static Summary</a></li> <!-- Link to Static Summary -->
+      <li><a href="/dynamic_summary">Dynamic Summary</a></li> <!-- Link to Dynamic Summary -->
+      <li><a href="#" id="aboutBtn">About</a></li>
+    </ul>
+  </nav>
+</header>
+
+      </ul>
+    </nav>
+  </header>
+
+  <!-- Hero Section with Video Background -->
+  <section class="hero">
+    <video autoplay muted loop class="background-video">
+      <source src="https://videos.pexels.com/video-files/3129595/3129595-sd_640_360_30fps.mp4" type="video/mp4">
+      Your browser does not support the video tag.
+    </video>
+    <div class="overlay"></div>
+    <div class="content">
+      <h1>Summarize Your Videos Instantly</h1>
+      <p>Leverage AI technology to extract key points and insights from lengthy videos in just seconds.</p>
+
+      <!-- Button to navigate to /static-demo -->
+      <form action="/static-demo" method="get">
+        <button type="submit" class="video-btn">Let's Summarize</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- About Section (Initially Hidden) -->
+  <section id="aboutSection" class="about-section hidden">
+    <h2>About AI Video Summarizer</h2>
+    <p>
+      The AI Video Summarizer helps you quickly extract the most meaningful insights from videos. It offers 
+      two key features:
+    </p>
+    <ul>
+      <li><strong>Static Summary:</strong> Get summaries from predefined videos instantly.</li>
+      <li><strong>Dynamic Upload:</strong> Upload any video and receive a real-time summary powered by AI.</li>
+    </ul>
+    <p>
+      This tool is ideal for students, professionals, and busy individuals looking to review video content efficiently.
+      It uses advanced machine learning models to identify key points, saving you time and effort.
+    </p>
+  </section>
+
+  <script>
+    // Function to show the About section
+    document.getElementById('aboutBtn').addEventListener('click', () => {
+      const aboutSection = document.getElementById('aboutSection');
+      aboutSection.classList.toggle('hidden');
+    });
+  </script>
+</body>
+</html>

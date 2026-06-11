@@ -1,0 +1,313 @@
+<!DOCTYPE html> 
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Video Transcription and Summarization</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0-alpha1/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            padding: 30px;
+            background-color: #f8f9fa;
+        }
+
+        .main-container {
+            max-width: 800px;
+            margin: 0 auto;
+            background-color: #ffffff;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            padding: 30px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .summary-box {
+            background-color: #f1f1f1;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            padding: 15px;
+            margin-top: 20px;
+            height: 300px;
+            overflow-y: auto;
+        }
+
+        #summary {
+            white-space: pre-wrap;
+        }
+
+        #loading {
+            display: none;
+            font-size: 18px;
+            text-align: center;
+            color: #007bff;
+        }
+
+        /* Hide the options initially */
+        #options {
+            display: none;
+        }
+
+        /* Style the hamburger button */
+        .hamburger-btn {
+            background: none;
+            border: none;
+            font-size: 24px;
+            cursor: pointer;
+        }
+
+        .hamburger-btn:hover {
+            color: #007bff;
+        }
+
+        /* Position the dropdown to the right */
+        .menu-items {
+            position: absolute;
+            right: 0;
+            top: 60px;
+            display: none;
+            background-color: white;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            width: 200px;
+        }
+
+        .menu-items.show {
+            display: block;
+        }
+
+        .menu-items ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+
+        .menu-items ul li {
+            padding: 10px;
+            border-bottom: 1px solid #ced4da;
+        }
+
+        .menu-items ul li:last-child {
+            border-bottom: none;
+        }
+
+        .menu-items ul li:hover {
+            background-color: #f1f1f1;
+            cursor: pointer;
+        }
+
+        /* Customize and Translation Box */
+        .custom-box {
+            display: none;
+            margin-top: 20px;
+            border: 1px solid #ced4da;
+            padding: 20px;
+            border-radius: 8px;
+            background-color: #f9f9f9;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container main-container">
+        <h1 class="text-center mb-4">Video Transcription and Summarization</h1>
+
+        <form id="videoForm" class="row g-3" enctype="multipart/form-data">
+            <div class="col-12">
+                <input type="text" id="videoUrl" class="form-control" placeholder="Enter Video URL" required>
+            </div>
+            <div class="col-12 text-center">
+                <button type="submit" class="btn btn-primary">Process Video</button>
+            </div>
+        </form>
+
+        <!-- Hamburger button to toggle options -->
+        <div class="text-end mt-4">
+            <button class="hamburger-btn" id="hamburgerMenu">&#9776;</button>
+        </div>
+        
+        <!-- Menu items (dropdown) -->
+        <div class="menu-items" id="menuItems">
+            <ul>
+                <li id="homeBtn">Home</li>
+                <li id="dynamicSummaryBtn">Dynamic Summary</li> 
+                <li id="translateBtn">Translate Summary</li>
+                <li id="downloadBtn">Download Summary</li>
+            </ul>
+        </div>
+
+        <!-- Translation Language Selection Box -->
+        <div class="custom-box" id="translationBox">
+            <label for="languageSelect">Select Language:</label>
+            <select id="languageSelect" class="form-select">
+                <!-- Options will be populated dynamically -->
+            </select>
+            <button class="btn btn-secondary mt-3" id="translateSubmitBtn">Translate</button>
+        </div>
+
+        <!-- Loading symbol and text -->
+        <div id="loading" class="mt-4">
+            <div class="spinner-border text-primary" role="status">
+                <span class="visually-hidden">Loading...</span>
+            </div>
+            <p>Generating summary...</p>
+        </div>
+
+        <div class="summary-box mt-4">
+            <h5>Summary:</h5>
+            <p id="summary"></p>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('videoForm').onsubmit = async function (e) {
+            e.preventDefault();
+            const videoUrl = document.getElementById('videoUrl').value;
+            const loadingElement = document.getElementById('loading');
+            const summaryElement = document.getElementById('summary');
+            const dynamicSummaryContainer = document.getElementById('dynamicSummaryContainer');
+
+            // Show loading indicator
+            loadingElement.style.display = 'block';
+
+            try {
+                const response = await fetch('/process', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ url: videoUrl }),
+                });
+
+                const result = await response.json();
+
+                if (result.summary) {
+                    summaryElement.innerText = result.summary;
+                } else {
+                    summaryElement.innerText = 'No summary generated.';
+                }
+
+            } catch (error) {
+                summaryElement.innerText = 'An error occurred during processing.';
+            } finally {
+                // Hide loading indicator
+                loadingElement.style.display = 'none';
+            }
+        };
+
+        // Toggle options when hamburger button is clicked
+        document.getElementById('hamburgerMenu').addEventListener('click', function () {
+            const menu = document.getElementById('menuItems');
+            menu.classList.toggle('show');
+        });
+
+        // Redirect to home (index.html)
+        document.getElementById('homeBtn').addEventListener('click', function () {
+            window.location.href = 'index.html';
+        });
+
+        // Show translation options when Translate Summary is clicked
+        document.getElementById('translateBtn').addEventListener('click', function () {
+            const translationBox = document.getElementById('translationBox');
+            translationBox.style.display = 'block';
+        });
+        // Redirect to the '/dynamic_summary' route when the button is clicked
+document.getElementById('dynamicSummaryBtn').addEventListener('click', function () {
+    window.location.href = '/dynamic_summary'; // Redirects to the Flask route for dynamic.html
+});
+
+        // Load supported languages and populate the language dropdown
+        async function loadSupportedLanguages() {
+            try {
+                const response = await fetch('/supported-languages', {
+                    method: 'GET',
+                });
+                const data = await response.json();
+
+                if (data.languages) {
+                    const languageSelect = document.getElementById('languageSelect');
+                    languageSelect.innerHTML = ''; // Clear existing options
+                    for (const [code, language] of Object.entries(data.languages)) {
+                        const option = document.createElement('option');
+                        option.value = code;
+                        option.textContent = language;
+                        languageSelect.appendChild(option);
+                    }
+                }
+            } catch (error) {
+                console.error('Failed to load supported languages:', error);
+            }
+        }
+
+        // Translate summary function
+        async function translateSummary(summary, targetLanguage) {
+            try {
+                const response = await fetch('/translate', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({
+                        summary,
+                        target_language: targetLanguage,
+                    }),
+                });
+
+                const data = await response.json();
+
+                if (data.error) {
+                    throw new Error(data.error);
+                }
+
+                return data.translated_summary;
+            } catch (error) {
+                throw new Error(`Translation failed: ${error.message}`);
+            }
+        }
+
+        // Handle translation button click
+        document.getElementById('translateSubmitBtn').addEventListener('click', async () => {
+            const language = document.getElementById('languageSelect').value;
+            const summary = document.getElementById('summary').innerText;
+
+            if (!summary) {
+                alert("Please generate a summary before translating.");
+                return;
+            }
+
+            // Show loading indicator
+            document.getElementById('loading').style.display = 'block';
+
+            try {
+                const translatedSummary = await translateSummary(summary, language);
+                document.getElementById('summary').innerText = translatedSummary;
+            } catch (error) {
+                alert(error.message);
+            } finally {
+                document.getElementById('loading').style.display = 'none';
+            }
+        });
+
+        // Load supported languages on page load
+        window.addEventListener('load', loadSupportedLanguages);
+
+        // Handle download button click
+        document.getElementById('downloadBtn').addEventListener('click', () => {
+            const summaryText = document.getElementById('summary').innerText;
+
+            if (!summaryText.trim()) {
+                alert("No summary available to download.");
+                return;
+            }
+
+            // Create a Blob from the summary text
+            const blob = new Blob([summaryText], { type: 'text/plain' });
+
+            // Create a download link and trigger it
+            const link = document.createElement('a');
+            link.href = URL.createObjectURL(blob);
+            link.download = 'summary.txt';
+            link.click();
+        });
+    </script>
+</body>
+</html>
